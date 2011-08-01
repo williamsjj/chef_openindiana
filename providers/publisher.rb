@@ -43,10 +43,6 @@ action :set do
     stdout.each do |line|
       case line
       when /^([^\s]*)\s*(\(preferred\))?\s*([^\s]*)\s*([^\s]*)\s*([^\s]*)\s*/
-        puts "publisher existing: " + $1
-        puts "publisher spec'd: " + new_resource.name
-        puts "url existing: " + $5
-        puts "url spec'd: " + new_resource.url
         if ($1 == new_resource.name) and ($5 != new_resource.url)
           remove_publishers.push($5)
         elsif ($1 == new_resource.name) and ($5 == new_resource.url)
