@@ -37,3 +37,4 @@ actions [:set, :unset, :add_origin, :remove_origin, :add_mirror, :remove_mirror,
 attribute :name, :kind_of => String, :name_attribute => true
 attribute :url, :kind_of => String, :required => true
 attribute :preferred, :kind_of => [TrueClass, FalseClass], :default => false
+attribute :replace, :kind_of => [TrueClass, FalseClass], :default => false

@@ -40,4 +40,20 @@ require root + '/providers/ips'
 case node["platform"]
 when "openindiana", "opensolaris"
   
+  # Set default IPS package source
+  openindiana_publisher "openindiana.org" do
+    action :set
+    preferred true
+    replace true
+    url node[:openindiana][:preferred_publisher]
+  end
+  
+  # Add SFE (add'l software) package source
+  openindiana_publisher "sfebuild" do
+    action :set
+    preferred false
+    replace true
+    url node[:openindiana][:sfe_publisher]
+  end
+  
 end

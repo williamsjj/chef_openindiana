@@ -32,6 +32,7 @@
 #
 ####################################################################
 
+require 'open3'
 require 'chef/provider/package'
 require 'chef/mixin/command'
 require 'chef/resource/package'
@@ -55,7 +56,7 @@ class Chef
           installed = false
           depends = false
           
-          popen4("pkg info -r #{package}") do |pid, stdin, stdout, stderr|
+          Open3.popen3("pkg info -r #{package}") do |stdin, stdout, stderr|
             stdout.each do |line|
               case line
               when /^\s+State: Installed/

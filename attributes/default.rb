@@ -40,3 +40,5 @@
 
 default[:openindiana][:preferred_publisher] = "http://pkg.openindiana.org/dev-il/"
 #default[:openindiana][:preferred_publisher] = "http://pkg.openindiana.org/dev/"
+
+default[:openindiana][:sfe_publisher] = "http://staticdev.uk.openindiana.org:10003/"

@@ -32,16 +32,55 @@
 #
 ####################################################################
 
+require 'open3'
+
 action :set do  
-  if new_resource.preferred
-    preferred = "-P"
-  else
-    preferred = ""
+  
+  already_exists = false
+  remove_publishers = []
+  
+  Open3.popen3("pkg publisher -H") do | stdin, stdout, stderr|
+    stdout.each do |line|
+      case line
+      when /^([^\s]*)\s*(\(preferred\))?\s*([^\s]*)\s*([^\s]*)\s*([^\s]*)\s*/
+        puts "publisher existing: " + $1
+        puts "publisher spec'd: " + new_resource.name
+        puts "url existing: " + $5
+        puts "url spec'd: " + new_resource.url
+        if ($1 == new_resource.name) and ($5 != new_resource.url)
+          remove_publishers.push($5)
+        elsif ($1 == new_resource.name) and ($5 == new_resource.url)
+          already_exists = true
+        end
+      end
+    end
   end
   
-  execute "set publisher #{new_resource.name}" do
+  if not already_exists
+    if new_resource.preferred
+      preferred = "-P"
+    else
+      preferred = ""
+    end
+
+    execute "set publisher #{new_resource.name}" do
+      action :run
+      command "pkg set-publisher #{preferred} --no-refresh -g '#{new_resource.url}' '#{new_resource.name}'"
+    end
+  end
+  
+  if new_resource.replace
+    for publisher in remove_publishers
+      execute "remove old publisher URL #{publisher}" do
+        action :run
+        command "pkg set-publisher -G '#{publisher}' '#{new_resource.name}'"
+      end
+    end
+  end
+  
+  execute "refresh publisher metadata #{new_resource.name}" do
     action :run
-    command "pkg set-publisher #{preferred} -g '#{new_resource.url}' '#{new_resource.name}'"
+    command "pkg refresh '#{new_resource.name}'"
   end
 end
 
@@ -87,7 +126,7 @@ action :unset do
 end
 
 action :refresh do
-  execute "refresh publisher metadata" do
+  execute "refresh publisher metadata #{new_resource.name}" do
     action :run
     command "pkg refresh '#{new_resource.name}'"
   end
