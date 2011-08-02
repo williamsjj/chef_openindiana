@@ -1,6 +1,13 @@
 # OpenIndiana Providers for Chef #
 
-Cookbook to provide support for OpenIndiana's packaging system `pkg`. After installing this cookbook, use the following syntax in your recipes to install/uninstall packages:
+Cookbook to provide:
+
+* Provider for the Chef `package` resource that implements IPS support (OpenIndiana's packaging system). 
+* Provider for managing IPS publishers/repos.
+* Provider for managing Solaris RBAC profiles/roles.
+
+
+After installing this cookbook, use the following syntax in your recipes to install/uninstall packages:
 
 	root = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 	
